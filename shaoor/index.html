@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Shaoor via VueJS</title>
+      <link
+         rel="stylesheet"
+         href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css"
+         integrity="sha384-DhY6onE6f3zzKbjUPRc2hOzGAdEf4/Dz+WJwBvEYL/lkkIsI3ihufq9hk9K4lVoK"
+         crossorigin="anonymous"
+      />
+   </head>
+   <body>
+      <div class="bg-light p-5">
+         <center>Shaoor Blog</center>
+      </div>
+      <div class="container" id="app">
+         <section class="row">
+            <aside class="col col-12" v-for="article in articles">
+               <div class="card m-3">
+                  <img
+                     v-if="article.img.hasImage"
+                     v-bind:src="article.img.url"
+                     v-bind:alt="article.title"
+                     class="img-fluid"
+                  />
+                  <div class="card-body">
+                     <h2 class="display-7">{{article.title}}</h2>
+                     <small class="float-right">{{article.viewsCount}}</small>
+                     <article>
+                        <p>{{article.teaserContent}}</p>
+                     </article>
+                  </div>
+               </div>
+            </aside>
+         </section>
+      </div>
+      <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+      <script>
+         const app = new Vue({
+            el: "#app",
+            data: {
+               articles: null,
+            },
+            methods: {},
+            mounted: function () {
+               fetch(
+                  "http://localhost:3000/?apiKey=c22dd99e0faf11ebadc10242ac120002"
+               )
+                  .then((res) => res.json())
+                  .then((data) => (this.articles = data));
+            },
+         });
+      </script>
+   </body>
+</html>
