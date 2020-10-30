@@ -3,126 +3,78 @@
    <head>
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link
+         rel="stylesheet"
+         href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css"
+         integrity="sha384-DhY6onE6f3zzKbjUPRc2hOzGAdEf4/Dz+WJwBvEYL/lkkIsI3ihufq9hk9K4lVoK"
+         crossorigin="anonymous"
+      />
       <title>VueJS Practice 1 App</title>
    </head>
    <body>
-      <div id="app">
-         <input type="range" min="0" max="10" v-model="maxViews" />
-         <div
-            v-for="article in articles"
-            v-if="maxViews >= article.viewsCount.$numberInt"
-         >
-            <img v-bind:src="article.img.url" v-bind:alt="article.name" />
-            <h2>{{ article.title }}</h2>
-            <span v-for="paragraph in article.content">
-               <p>{{paragraph}}</p>
-            </span>
+      <div id="app" class="container">
+         <div class="bg-light p-5">
+            <center><h1 class="display-4">A random shop</h1></center>
+            <span class="float-right" v-if="cart.length>0"
+               >Cart: {{cart.length}}</span
+            >
          </div>
+         ${{minPrice}} to ${{maxPrice}}
+         <input
+            type="range"
+            class="form-range"
+            min="2"
+            max="125"
+            v-model="maxPrice"
+         />
+         <center>
+            <div v-if="!products">loading</div>
+            <section class="row mt-3">
+               <aside
+                  class="col col-md-4 mb-3"
+                  v-for="item in products"
+                  v-if="item.price >= Number(minPrice) && item.price <= Number(maxPrice)"
+               >
+                  <div class="card">
+                     <img
+                        v-bind:src="item.image"
+                        class="img-fluid"
+                        v-bind:alt="item.image_title"
+                     />
+                     <div class="card-body">
+                        <h3>{{item.title}}</h3>
+                        <p>{{item.description}}</p>
+                        <h2>${{item.price}}</h2>
+                     </div>
+                     <div class="btn btn-info" v-on:click="addToCart(item)">
+                        +
+                     </div>
+                  </div>
+               </aside>
+            </section>
+         </center>
       </div>
       <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
       <script>
-         const data = {
-            maxViews: 0,
-            articles: [
-               {
-                  _id: { $oid: "5f97fb0bbc663135682a21d4" },
-                  title:
-                     "Watch Dogs Legion: Farting, beatboxing, and other ways to be a pest in London",
-                  tags: ["PlayStation", "Gaming", "Sega", "Sony"],
-                  status: { published: true, publishDate: "26/10/2020" },
-                  excerpt:
-                     "Recruit people with special skills—like uncontrollable flatulence—and shake up the city while you're saving it.",
-                  authorID: "1",
-                  name:
-                     "Watch Dogs Legion: Farting, beatboxing, and other ways to be a pest in London",
-                  teaserContent:
-                     "Recruit people with special skills—like uncontrollable flatulence—and shake up the city while you're saving it. Watch Dogs Legion releases later this week on October 29. In the meantime we've been busy playing it, and when we're not working on saving London from the oppressive forces of evil we've been making a complete mess of the city. ",
-                  content: [
-                     "Watch Dogs Legion releases later this week on October 29. In the meantime we've been busy playing it, and when we're not working on saving London from the oppressive forces of evil we've been making a complete mess of the city.",
-                     "With a collection of hacking and stealth tools, plus a group of recruits with a suite of strange skills, there are a number of ways to be a real pest. In the video above (and here on YouTube) you can see some of the ways we've been wreaking havoc on the city we're trying to liberate.",
-                     "For instance, sending a guy who can't stop farting on a stealth mission, where his flatulence might give his position away to enemies. (Yes, his uncontrollable farting is actually a passive skill.) We also recruited a beatboxer in a pink fox costume and sent her into a highly secure area to show off her musical talents to heavily armed soldiers. They weren't impressed. You can even recruit a living statue, covered in gold paint, who can hide in plain sight after shooting up a cop car. And there's always the old trick of controlling cars with a smartphone to avoid capture... though even the electric cars of the future sometimes explode. Sorry, London!",
-                  ],
-                  img: {
-                     hasImage: true,
-                     url:
-                        "https://twinfinite.net/wp-content/uploads/2020/07/Watch-Dogs-Legion.jpg",
-                     source: "twinfinite.net",
-                     credit: "Ubisoft",
-                  },
-                  metaData: {
-                     description:
-                        "Watch Dogs Legion: Farting, beatboxing, and other ways to be a pest in London",
-                     teaserContent:
-                        "Recruit people with special skills—like uncontrollable flatulence—and shake up the city while you're saving it. Watch Dogs Legion releases later this week on October 29. In the meantime we've been busy playing it, and when we're not working on saving London from the oppressive forces of evil we've been making a complete mess of the city. ",
-                     keywords: [
-                        "Watch Dogs Legion",
-                        "Gaming",
-                        "PlayStation",
-                        "Sony",
-                        "Microsoft",
-                        "Xbox",
-                        "London",
-                     ],
-                     author: "Christopher Livingston",
-                  },
-                  id: "b0200e34d783479da49794d3e40d571e",
-                  slug:
-                     "watch-dogs-legion-farting-beatboxing,-and-other-ways-to-be-a-pest-in-london-b0200e34",
-                  viewsCount: { $numberInt: "3" },
-                  isFeatured: false,
+         const app = new Vue({
+            el: "#app",
+            data: {
+               maxPrice: 125,
+               minPrice: 2,
+               products: null,
+               cart: [],
+            },
+            mounted: function () {
+               fetch("https://hplussport.com/api/products/order/price")
+                  .then((response) => response.json())
+                  .then((data) => (this.products = data));
+            },
+            methods: {
+               addToCart: function (product) {
+                  this.cart.push(product);
                },
-               {
-                  _id: { $oid: "5f97f9cdbc663135682a21d3" },
-                  title:
-                     "20 Years Ago, the PS2 Launched With Terrible Games But Still Won the Generation",
-                  tags: ["PlayStation", "Gaming", "Sega", "Sony"],
-                  status: { published: true, publishDate: "26/10/2020" },
-                  excerpt:
-                     "Though Sony teased footage of next-gen games like Metal Gear Solid 2 and Final Fantasy VIII, what we got on launch day 20 years ago might have been the year’s biggest bummer. Here's why that didn't matter in the long run.",
-                  authorID: "1",
-                  name:
-                     "20 Years Ago, the PS2 Launched With Terrible Games But Still Won the Generation",
-                  teaserContent:
-                     "There’s a certain kind of person who absolutely has to buy a console on launch day. They've been looking forward to seeing what the next generation of gaming will bring so hard that they’re willing to put down money and risk disappointment before the reviews come in.",
-                  content: [
-                     "There’s a certain kind of person who absolutely has to buy a console on launch day. They've been looking forward to seeing what the next generation of gaming will bring so hard that they’re willing to put down money and risk disappointment before the reviews come in.",
-                     "One of the key metrics we use to measure how successful a hardware launch is, paradoxically, software. The “launch lineup” games that are available on Day One can often be a strong predictor of a machine’s long-term potential. Think about the NES’s slate of killers in 1986 when it hit American shelves, including Super Mario Bros, Excitebike, and Hogan’s Alley. Or the Sega Dreamcast, which hit with Soul Calibur, Sonic Adventure, and NFL 2K on the same day.",
-                     "But one of the most successful and beloved consoles of all time is notorious for a stinky launch lineup. We’re talking about the PlayStation 2, which hit American store shelves on Oct. 26, 2000. Twenty years ago we had been teased by footage of next-gen games like Metal Gear Solid 2 and gorgeous re-renders from Final Fantasy VIII. But what we got on launch day might have been the year’s biggest bummer.",
-                     "The rollout of the PS2 had been rife with problems already. In Japan, Sony butted heads with the government about export restrictions, with the military fearing that chips in the console could be used by foreign nations for weapons guidance. The production pipeline also had issues, with the company underestimating demand and not wanting to commit too much as each PS2 was being sold at a loss, with the profit made up from software sales.",
-                     "That said, Sony had already established itself as a serious contender in the console space. The original PlayStation, first conceptualized as a partnership with Nintendo, had succeeded based on a number of factors. Sony locked down some of Japan’s most accomplished developers to bring established franchises, innovated new hardware like the dual analog sticks, and branded itself as the hot provider for the more mature gamer. With their next-generation machine, the higher-ups at Sony had a different goal: make it harder for Nintendo and Sega, its major competitors, to make a comeback.",
-                     "Sony’s expertise across multiple industries gave it a head start in a number of areas. It was able to include a DVD-ROM drive in the PlayStation 2, giving purchasers access to the hot new home video format at a price that was competitive with standalone DVD players. It also boasted internet connectivity, which was starting to become a major hook. And the chips at the core of the PS2, most notably the “Emotion Engine,” were capable of delivering high-end performance that no other console could match.",
-                     "The issue, though, was software development. There’s always an adjustment period where third-party programmers have to get up to speed with the new features and functions of a console, and they’re caught between a rock and a hard place. They have to make launch games look significantly better than the generation before them while also hitting an immovable release date. And for the PS2, what came out as a result was… underwhelming, to say the least.",
-                     "It wasn’t quantity that was an issue. In the United States, gamers had their pick of 29 titles to take home at launch. What was missing, though, was anything that could even remotely be called a system-seller. Here are a few of the biggest fails in the PS2’s initial lineup.",
-                     "One of the biggest factors in the success of the original PlayStation was Squaresoft defecting from Nintendo and bringing Sony Final Fantasy VII. That game ushered in the modern era of JRPGs and wowed players with its epic storyline and lush CGI cutscenes. But Square was nowhere to be found at the PS2’s launch, and role-playing fans instead had to settle for From Software’s pair of offerings: awkward first-person dungeon crawler Eternal Ring and insanely dull action-RPG Evergrace. This was before From found its sea legs in the Dark Souls series, so putting it out front to US audiences was a… curious choice.",
-                     "The power of a puzzle game to sell a console was proven when Tetris made the Game Boy the most popular handheld in the world, but Sony’s first-party Fantavision couldn’t do the same. The shallow fireworks-chaining concept left little room for advanced strategy, and the whole thing played more like a tech demo for the PS2’s particle system than an actual game. ",
-                     "Many of the games simply had no appeal to Western audiences at all, like Koei’s molasses-slow strategy title Kessen, set during the Sengoku period of Japan’s feudal collapse, and also-ran mech combat title Gungriffon Blaze. And then there were a handful of sports ports that could be played on other systems already.",
-                     "That winter, the console gave owners a wealth of choices across nearly every genre. Rockstar dropped Grand Theft Auto III, while Square checked in with the visually luxuriant Final Fantasy X. Capcom debuted the Devil May Cry franchise, Konami finally released Metal Gear Solid 2, and Fumito Ueda’s all-time classic Ico pushed the emotional envelope. A mere year later, Sony had established itself as the ones to beat this generation, with Microsoft’s original Xbox and Nintendo’s floundering GameCube barely considered threats.",
-                     "One of the most amazing things about the PS2 was its long lifespan. New games for the system continued to be released as late as 2014, and the software catalogue has dozens of all-time classics in every genre. Quirky platformer Psychonauts shared shelf space with the violent God of War games. Psychedelic shooter Rez fit in right next to the ultra-realistic Gran Turismo 3. ",
-                     "We’re about to enter yet another phase of the never-ending console wars, with Sony and Microsoft both debuting new hardware (Nintendo seems content to keep enjoying the Switch’s success for a little longer). The PlayStation 5 will hit stores on Nov. 12, and the launch lineup definitely seems more solid than it did 20 years ago. A new Spider-Man game continues one of the PS4’s most successful first-party franchises, the Demon’s Souls remake will grab the hardcores, and quirky adventure Bugsnax will land with the younger crowd. Non-exclusives also look good, with Assassin’s Creed: Valhalla and a new Call of Duty leading the pack.",
-                     "Sony has less to prove this time around, having firmly cemented itself in the console gaming market. But looking at the PS2’s launch titles gives us the chance to think about what those early games say about a system’s priorities, as well as what it can grow into if given a chance.",
-                  ],
-                  img: {
-                     hasImage: true,
-                     url:
-                        "https://i.pcmag.com/imagery/articles/05vgLXPx5gKW27A2dFr3aI5-3.1603643330.fit_lim.fit_lim.size_848x.jpg",
-                     source: "www.pcmag.com",
-                     credit: "Bryan Chan/Los Angeles Times",
-                  },
-                  viewsCount: { $numberInt: "1" },
-                  metaData: {
-                     description:
-                        "Though Sony teased footage of next-gen games like Metal Gear Solid 2 and Final Fantasy VIII, what we got on launch day 20 years ago might have been the year’s biggest bummer. Here's why that didn't matter in the long run.",
-                     keywords: ["PlayStation", "Gaming", "Sega", "Sony"],
-                     author: "K. Thor Jensen",
-                  },
-                  id: "99368258f31e48f58fb449ddf5bc86b9",
-                  slug:
-                     "20-years-ago-the-ps2-launched-with-terrible-games-but-still-won-the-generation-99368258",
-                  isFeatured: false,
-               },
-            ],
-         };
-         const app = new Vue({ el: "#app", data: data });
+            },
+         });
       </script>
    </body>
 </html>
