@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Chapter 2</title>
+      <link
+         rel="stylesheet"
+         href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css"
+         integrity="sha384-DhY6onE6f3zzKbjUPRc2hOzGAdEf4/Dz+WJwBvEYL/lkkIsI3ihufq9hk9K4lVoK"
+         crossorigin="anonymous"
+      />
+      <script
+         src="https://kit.fontawesome.com/4c54dce192.js"
+         crossorigin="anonymous"
+      ></script>
+   </head>
+   <body>
+      <div id="app" class="container">
+         <nav class="navbar-light fixed-top" v-if="itemsInCart.length > 0">
+            <div class="float-right">
+               <p class="display-6">
+                  Cart:
+                  <span class="badge bg-secondary">
+                     {{itemsInCart.length}}</span
+                  >
+               </p>
+            </div>
+         </nav>
+         <section class="my-3 mt-5" v-bind:class="sliders">
+            <input
+               type="range"
+               class="form-range"
+               min="0"
+               v-bind:max="maxPrice"
+               v-model="minPrice"
+            />
+            <span style="width: 250px; text-align: center" class="mx-4"
+               >${{minPrice}} to ${{maxPrice}}</span
+            >
+            <input
+               type="range"
+               class="form-range"
+               v-bind:min="minPrice"
+               max="130"
+               v-model="maxPrice"
+            />
+         </section>
+         <section class="align-item-center row">
+            <aside
+               class="col-12 col-md-4 col-lg-3"
+               v-for="product in products"
+               v-if="product.price <= maxPrice && product.price >= minPrice"
+            >
+               <div class="card my-3">
+                  <img
+                     v-bind:src="product.image"
+                     v-bind:alt="product.image_title"
+                     class="card-img-top"
+                  />
+                  <section class="card-body">
+                     <h5 class="card-title">
+                        {{product.name}} $<small>{{product.price}}</small>
+                     </h5>
+                     <p class="card-text">{{product.description}}</p>
+                  </section>
+                  <button
+                     class="btn btn-primary"
+                     v-on:click="addToCart(product.id)"
+                  >
+                     Add To Cart
+                  </button>
+               </div>
+            </aside>
+         </section>
+      </div>
+      <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+      <script>
+         const app = new Vue({
+            el: "#app",
+            data: {
+               products: null,
+               maxPrice: 130,
+               minPrice: 0,
+               itemsInCart: [],
+               slidersStatus: true,
+            },
+            methods: {
+               addToCart: function (itemId) {
+                  if (!this.itemsInCart.includes(itemId))
+                     this.itemsInCart.push(itemId);
+               },
+            },
+            mounted: function () {
+               fetch("https://hplussport.com/api/products/order/price")
+                  .then((response) => response.json())
+                  .then((data) => (this.products = data));
+            },
+            computed: {
+               sliders: function () {
+                  return this.slidersStatus ? "d-flex" : "d-none";
+               },
+            },
+         });
+      </script>
+   </body>
+</html>
