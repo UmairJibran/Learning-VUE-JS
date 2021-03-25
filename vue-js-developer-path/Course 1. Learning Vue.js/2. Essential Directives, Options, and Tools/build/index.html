@@ -14,7 +14,32 @@
 	</head>
 	<body>
 		<div id="app">
-			<img />
+			<table class="table-auto border-collapse border border-green-500">
+				<thead>
+					<tr>
+						<th class="border-collapse border border-green-500">
+							Reference ID
+						</th>
+						<th class="border-collapse border border-green-500">Name</th>
+						<th class="border-collapse border border-green-500">
+							Close Approach Date
+						</th>
+					</tr>
+				</thead>
+				<tbody v-cloak>
+					<tr v-for="asteroid in asteroids">
+						<td class="border-collapse border border-green-500">
+							{{asteroid.neo_reference_id}}
+						</td>
+						<td class="border-collapse border border-green-500">
+							{{asteroid.name}}
+						</td>
+						<td class="border-collapse border border-green-500">
+							{{getCloseDate(asteroid)}}
+						</td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 
 		<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
@@ -34,6 +59,11 @@
 						axios.get(url).then(function (res) {
 							vm.asteroids = res.data.near_earth_objects.slice(0, 10);
 						});
+					},
+					getCloseDate: function (asteroid) {
+						return asteroid.close_approach_data.length > 0
+							? asteroid.close_approach_data[0].close_approach_date
+							: "N/A";
 					},
 				},
 			});
