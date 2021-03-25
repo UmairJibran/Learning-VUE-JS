@@ -14,44 +14,40 @@
 	</head>
 	<body>
 		<div id="app">
-			<table class="table-auto border-collapse border border-green-500">
+			<table class="table-auto">
 				<thead>
 					<tr>
-						<th class="border-collapse border border-green-500">#</th>
-						<th class="border-collapse border border-green-500">
-							Reference ID
-						</th>
-						<th class="border-collapse border border-green-500">Name</th>
-						<th class="border-collapse border border-green-500">
-							Close Approach Date
-						</th>
-						<th class="border-collapse border border-green-500">
-							Miss Distance
-						</th>
+						<th>#</th>
+						<th>Name</th>
+						<th>Close Approach Date</th>
+						<th>Miss Distance</th>
+						<th>Remove</th>
 					</tr>
 				</thead>
 				<tbody v-cloak>
-					<tr v-for="(asteroid, index) in asteroids">
-						<td class="border-collapse border border-green-500">
-							{{index + 1}}
-						</td>
-						<td class="border-collapse border border-green-500">
-							{{asteroid.neo_reference_id}}
-						</td>
-						<td class="border-collapse border border-green-500">
-							{{asteroid.name}}
-						</td>
-						<td class="border-collapse border border-green-500">
-							{{getCloseDate(asteroid)}}
-						</td>
-						<td class="border-collapse border border-green-500">
+					<tr
+						v-for="(asteroid, index) in asteroids"
+						:key="asteroid.neo_reference_id"
+					>
+						<td>{{index + 1}}</td>
+						<td>{{asteroid.name}}</td>
+						<td>{{getCloseDate(asteroid)}}</td>
+						<td>
 							<ul v-if="asteroid.close_approach_data">
 								<li
 									v-for="(value,key) in asteroid.close_approach_data[0].miss_distance"
 								>
-									{{key}} : {{value}}
+									{{key}}: {{value}}
 								</li>
 							</ul>
+						</td>
+						<td>
+							<button
+								@click="remove(index)"
+								class="px-4 py-2 bg-yellow-400 border rounded-md"
+							>
+								Remove
+							</button>
 						</td>
 					</tr>
 				</tbody>
@@ -73,13 +69,16 @@
 						let url =
 							"https://api.nasa.gov/neo/rest/v1/neo/browse?api_key=" + apiKey;
 						axios.get(url).then(function (res) {
-							vm.asteroids = res.data.near_earth_objects.slice(0, 10);
+							vm.asteroids = res.data.near_earth_objects;
 						});
 					},
 					getCloseDate: function (asteroid) {
 						return asteroid.close_approach_data.length > 0
 							? asteroid.close_approach_data[0].close_approach_date
 							: "N/A";
+					},
+					remove: function (index) {
+						this.asteroids.splice(index, 1);
 					},
 				},
 			});
