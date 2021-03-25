@@ -20,17 +20,22 @@
 		<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 		<script>
-			let apiKey = "VR4DiS8WBwlNO88DyuEashtHn9HmsI49Ud6Uo7RQ";
-			let url = "https://api.nasa.gov/planetary/apod?api_key=" + apiKey;
 			let vm = new Vue({
 				el: "#app",
 				data: { imgSrc: "", imgTitle: "" },
-				methods: {},
-			});
-
-			axios.get(url).then(function (res) {
-				vm.imgSrc = res.data.url;
-				vm.imgTitle = res.data.title;
+				created: function () {
+					this.fetchApod();
+				},
+				methods: {
+					fetchApod: function () {
+						let apiKey = "VR4DiS8WBwlNO88DyuEashtHn9HmsI49Ud6Uo7RQ";
+						let url = "https://api.nasa.gov/planetary/apod?api_key=" + apiKey;
+						axios.get(url).then(function (res) {
+							vm.imgSrc = res.data.url;
+							vm.imgTitle = res.data.title;
+						});
+					},
+				},
 			});
 		</script>
 	</body>
