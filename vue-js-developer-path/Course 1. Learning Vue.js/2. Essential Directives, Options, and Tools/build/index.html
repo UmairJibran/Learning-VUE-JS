@@ -17,6 +17,7 @@
 			<table class="table-auto border-collapse border border-green-500">
 				<thead>
 					<tr>
+						<th class="border-collapse border border-green-500">#</th>
 						<th class="border-collapse border border-green-500">
 							Reference ID
 						</th>
@@ -24,10 +25,16 @@
 						<th class="border-collapse border border-green-500">
 							Close Approach Date
 						</th>
+						<th class="border-collapse border border-green-500">
+							Miss Distance
+						</th>
 					</tr>
 				</thead>
 				<tbody v-cloak>
-					<tr v-for="asteroid in asteroids">
+					<tr v-for="(asteroid, index) in asteroids">
+						<td class="border-collapse border border-green-500">
+							{{index + 1}}
+						</td>
 						<td class="border-collapse border border-green-500">
 							{{asteroid.neo_reference_id}}
 						</td>
@@ -36,6 +43,15 @@
 						</td>
 						<td class="border-collapse border border-green-500">
 							{{getCloseDate(asteroid)}}
+						</td>
+						<td class="border-collapse border border-green-500">
+							<ul v-if="asteroid.close_approach_data">
+								<li
+									v-for="(value,key) in asteroid.close_approach_data[0].miss_distance"
+								>
+									{{key}} : {{value}}
+								</li>
+							</ul>
 						</td>
 					</tr>
 				</tbody>
