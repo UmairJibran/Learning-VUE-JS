@@ -13,7 +13,15 @@
 		</style>
 	</head>
 	<body>
-		<div id="app">
+		<div class="m-5" id="app">
+			<h2 class="text-5xl">Nearest-Earth Objects</h2>
+			<p class="text-base" v-cloak v-if="near_earth_objects > 0">
+				Showing {{near_earth_objects}} item(s)
+			</p>
+			<p class="text-base" v-cloak v-if="near_earth_objects > 0">
+				Nearest of them all:
+				<span class="font-bold text-lg">{{nearest_earth_object}}</span>
+			</p>
 			<table class="table-auto">
 				<thead>
 					<tr>
@@ -62,6 +70,31 @@
 				data: { asteroids: [] },
 				created: function () {
 					this.fetchAsteroids();
+				},
+				computed: {
+					near_earth_objects: function () {
+						return this.asteroids.length;
+					},
+					nearest_earth_object: function () {
+						let filtered_asteroids = this.asteroids.filter(function (object) {
+							return object.close_approach_data.length > 0;
+						});
+						let simplified_asteroids = filtered_asteroids.map(function (
+							asteroid
+						) {
+							return {
+								name: asteroid.name,
+								miss_distance:
+									asteroid.close_approach_data[0].miss_distance.lunar,
+							};
+						});
+						let sorted_asteroids_by_miss_distance = simplified_asteroids.sort(
+							function (a, b) {
+								return a.miss_distance - b.miss_distance;
+							}
+						);
+						return sorted_asteroids_by_miss_distance[0].name;
+					},
 				},
 				methods: {
 					fetchAsteroids: function () {
