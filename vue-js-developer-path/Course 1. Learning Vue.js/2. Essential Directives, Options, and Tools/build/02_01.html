@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Chapter 2</title>
+		<link rel="stylesheet" href="./css/style.css" />
+		<style>
+			[v-cloak] {
+				display: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<div class="container mx-4 my-2">
+				<form v-show="!submitted" class="mt-5">
+					<input
+						type="email"
+						name="user-email"
+						class="border px-4 py-2 my-2 rounded-md w-auto"
+						v-model="email"
+					/>
+					<br />
+					<button
+						class="block px-4 py-2 rounded-md bg-blue-500 border-white border text-white hover:bg-blue-600"
+						@click.prevent="process"
+					>
+						Submit
+					</button>
+				</form>
+				<h2 v-show="submitted" v-cloak class="text-2xl mt-5">
+					Thank you for submitting your email
+				</h2>
+			</div>
+		</div>
+		<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+		<script>
+			let vm = new Vue({
+				el: "#app",
+				data: {
+					email: "umair@jibran.com",
+					submitted: false,
+				},
+				methods: {
+					process: function () {
+						this.submitted = true;
+					},
+				},
+			});
+		</script>
+	</body>
+</html>
