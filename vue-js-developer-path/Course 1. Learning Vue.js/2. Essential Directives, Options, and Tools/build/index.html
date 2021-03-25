@@ -14,7 +14,7 @@
 	</head>
 	<body>
 		<div id="app">
-			<img :src="imgSrc" :title="imgTitle" />
+			<img />
 		</div>
 
 		<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
@@ -22,17 +22,17 @@
 		<script>
 			let vm = new Vue({
 				el: "#app",
-				data: { imgSrc: "", imgTitle: "" },
+				data: { asteroids: [] },
 				created: function () {
-					this.fetchApod();
+					this.fetchAsteroids();
 				},
 				methods: {
-					fetchApod: function () {
+					fetchAsteroids: function () {
 						let apiKey = "VR4DiS8WBwlNO88DyuEashtHn9HmsI49Ud6Uo7RQ";
-						let url = "https://api.nasa.gov/planetary/apod?api_key=" + apiKey;
+						let url =
+							"https://api.nasa.gov/neo/rest/v1/neo/browse?api_key=" + apiKey;
 						axios.get(url).then(function (res) {
-							vm.imgSrc = res.data.url;
-							vm.imgTitle = res.data.title;
+							vm.asteroids = res.data.near_earth_objects.slice(0, 10);
 						});
 					},
 				},
