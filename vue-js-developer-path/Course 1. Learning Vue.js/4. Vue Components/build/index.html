@@ -4,7 +4,7 @@
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>VUE Components</title>
+		<title>Using NASA API for showing Near Earth Objects</title>
 		<link rel="stylesheet" href="./css/style.css" />
 		<style>
 			[v-cloak] {
@@ -14,55 +14,36 @@
 	</head>
 	<body>
 		<div class="m-5" id="app">
-			<a-pod>
-				<p slot="caption">Today's Astronomy Image of the day</p>
-				<h4 class="text-3xl" slot="title">Image #1</h4>
-			</a-pod>
-			<a-pod date="2018-08-07">
-				<h4 slot="title" class="text-3xl">Image #2</h4>
-				<p slot="caption" slot-scope="pic">
-					{{pic.date}}'s Astronomy Image of the day
-				</p>
-			</a-pod>
+			<asteroids-table
+				:asteroids="asteroids"
+				header="Near-Earth Objects"
+				@remove="remove"
+			></asteroids-table>
 		</div>
 
 		<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+		<script src="./asteroids_table.js"></script>
 		<script>
-			Vue.component("a-pod", {
-				template:
-					'<div>\
-						<slot  name="title"> \
-							<h4 class="text-3xl">Untitled</h4>\
-						</slot> \
-						<img v-cloak :src="imgSrc" :title="imgTitle" />\
-						<slot v-bind:date="date" name="caption">\
-							<p>Uncaptioned</p>\
-						</slot> \
-					</div>',
-				props: ["date"],
-				data: function () {
-					return { imgSrc: "", imgTitle: "" };
-				},
+			let vm = new Vue({
+				el: "#app",
+				data: { asteroids: [] },
 				created: function () {
-					this.fetchApod();
+					this.fetchAsteroids();
 				},
 				methods: {
-					fetchApod: function () {
+					remove: function (index) {
+						this.asteroids.splice(index, 1);
+					},
+					fetchAsteroids: function () {
 						let apiKey = "VR4DiS8WBwlNO88DyuEashtHn9HmsI49Ud6Uo7RQ";
-						let url = "https://api.nasa.gov/planetary/apod?api_key=" + apiKey;
-						if (this.date) url += "&date=" + this.date;
-						let self = this;
-						axios.get(url).then(function (response) {
-							self.imgSrc = response.data.url;
-							self.imgTitle = response.data.title;
+						let url =
+							"https://api.nasa.gov/neo/rest/v1/neo/browse?api_key=" + apiKey;
+						axios.get(url).then(function (res) {
+							vm.asteroids = res.data.near_earth_objects;
 						});
 					},
 				},
-				computed: {},
-			});
-			let vm = new Vue({
-				el: "#app",
 			});
 		</script>
 	</body>
